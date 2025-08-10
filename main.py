@@ -32,8 +32,17 @@ Example Interaction:
 
 """
 
-response = llm.invoke([{"role": "system","content": system_prompt},
-                       {"role":"user","content": "Who are you?"}])
+print("Ask Anything to Isaac Newton")
+
+history = []
 
 while True:
-    user_input = input("You :")
+    user_input = input("You : ")
+    if user_input == "exit":
+        break
+    history.append({"role": "user", "content": user_input})
+    response = llm.invoke([{"role": "system", "content": system_prompt}] + history)
+
+    history.append({"role": "assistant", "content": response.content})
+
+    print(f"Isaac: {response.content}")
