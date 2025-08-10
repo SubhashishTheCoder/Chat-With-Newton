@@ -1,7 +1,9 @@
+from langchain_core.output_parsers import StrOutputParser
 from langchain_google_genai import ChatGoogleGenerativeAI
 from dotenv import load_dotenv
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+import gradio as gr
 
 import os
 
@@ -36,22 +38,51 @@ Example Interaction:
 """
 
 prompt = ChatPromptTemplate.from_messages([SystemMessage(content=system_prompt),
-                                           MessagesPlaceholder(variable_name="messages")])
+                                           MessagesPlaceholder(variable_name="messages"),
+                                           ("user", "{input}")])
 
-chain = prompt | llm
-
-print("Ask Anything to Isaac Newton")
+chain = prompt | llm | StrOutputParser()
 
 langchain_history = []
 
-while True:
-    user_input = input("You : ")
-    if user_input == "exit":
-        break
-    langchain_history.append(HumanMessage(content=user_input))
-    response = chain.invoke({"messages":langchain_history})
+def chat_input(user_input,history):
+    print(user_input,history)
+    for item in history:
+        if item["role"] == "user":
+            langchain_history.append(HumanMessage(content=item["content"]))
+        elif item["role"] == "assistant":
+            langchain_history.append(AIMessage(content=item["content"]))
+    response = chain.invoke({"input":user_input,"messages":langchain_history})
 
-    langchain_history.append(AIMessage(response.content))
 
-    print(langchain_history)
-    print(f"Isaac: {response.content}")
+    return "",history + [{"role" : "user","content":user_input},
+                         {"role": "assistant", "content": response}]
+
+def clear_chat():
+    return "",[]
+
+
+
+page = gr.Blocks(theme=gr.themes.Soft(),title="Chat with Newton")
+
+
+with page:
+    gr.Markdown("""
+    # Chat With Newton
+    Your Personal Conversation with Isaac Newton
+    """)
+
+    chatbot = gr.Chatbot(type="messages",show_label=False,avatar_images=(None,"Newton.png"))
+
+    msg = gr.Textbox(placeholder="Type your message",show_label= False)
+
+    msg.submit(chat_input,inputs= [msg,chatbot],outputs= [msg,chatbot])
+
+    button = gr.Button("Clear Chat",variant= "Secondary")
+
+    button.click(clear_chat,outputs=[msg,chatbot])
+
+
+
+page.launch()
+
