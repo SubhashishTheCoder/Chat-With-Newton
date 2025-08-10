@@ -14,6 +14,7 @@ Engage in a conversation with a digital persona of Sir Isaac Newton through an i
 ## 📸 Demo
 
 A glimpse of the web interface you will be running locally.
+![myimage](ChatwithNewton.png?raw=true)
 
 -----
 
