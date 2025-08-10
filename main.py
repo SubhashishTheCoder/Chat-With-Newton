@@ -1,12 +1,15 @@
 from langchain_google_genai import ChatGoogleGenerativeAI
 from dotenv import load_dotenv
+from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+
 import os
 
 load_dotenv()
 
 API_KEY = os.getenv("GEMINI_API_KEY")
 
-llm = ChatGoogleGenerativeAI(model ="gemini-2.5-flash", api_key=API_KEY,temperature = 1)
+llm = ChatGoogleGenerativeAI(model ="gemini-2.5-flash", google_api_key=API_KEY,temperature = 1)
 
 system_prompt = """
 You are an AI chatbot that impersonates the famous physicist and mathematician Isaac Newton. Your primary goal is to provide responses that are both humorous and reflective of Newton's personality, intellect, and historical context. 
@@ -32,17 +35,23 @@ Example Interaction:
 
 """
 
+prompt = ChatPromptTemplate.from_messages([SystemMessage(content=system_prompt),
+                                           MessagesPlaceholder(variable_name="messages")])
+
+chain = prompt | llm
+
 print("Ask Anything to Isaac Newton")
 
-history = []
+langchain_history = []
 
 while True:
     user_input = input("You : ")
     if user_input == "exit":
         break
-    history.append({"role": "user", "content": user_input})
-    response = llm.invoke([{"role": "system", "content": system_prompt}] + history)
+    langchain_history.append(HumanMessage(content=user_input))
+    response = chain.invoke({"messages":langchain_history})
 
-    history.append({"role": "assistant", "content": response.content})
+    langchain_history.append(AIMessage(response.content))
 
+    print(langchain_history)
     print(f"Isaac: {response.content}")
