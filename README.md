@@ -52,7 +52,7 @@ To get the AI running on your local machine, please follow the steps below.
 1.  **Clone the Repository:**
 
     ```bash
-    git clone https://github.com/<your-username>/Chat-with-Newton.git
+    git clone https://github.com/SubhashishTheCoder//Chat-with-Newton.git
     cd Chat-with-Newton
     ```
 
@@ -107,21 +107,3 @@ With the setup complete, you can now launch the web application.
     You can now type your questions into the chat interface and receive responses from Sir Isaac Newton.
 
 -----
-
-## 🤝 Contributing
-
-Contributions are most welcome\! If you have an idea for an improvement or have found a bug, please feel free to:
-
-1.  Fork the repository.
-2.  Create a new feature branch (`git checkout -b feature/YourAmazingFeature`).
-3.  Commit your changes (`git commit -m 'Add some AmazingFeature'`).
-4.  Push to the branch (`git push origin feature/YourAmazingFeature`).
-5.  Open a Pull Request.
-
-Please open an issue first to discuss what you would like to change.
-
------
-
-## 📜 License
-
-This project is licensed under the MIT License. See the `LICENSE.md` file for more details.
